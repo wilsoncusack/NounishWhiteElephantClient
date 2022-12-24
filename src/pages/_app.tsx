@@ -15,7 +15,7 @@ function App({ Component, pageProps }: AppProps) {
     <WagmiConfig client={client}>
       <RainbowKitProvider chains={chains}>
         <NextHead>
-          <title>My wagmi + RainbowKit App</title>
+          <title>Nounish White Elephant</title>
         </NextHead>
 
         {mounted && <Component {...pageProps} />}
