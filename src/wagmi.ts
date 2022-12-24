@@ -1,10 +1,10 @@
 import { getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createClient } from 'wagmi'
-import { goerli, mainnet } from 'wagmi/chains'
+import { goerli, mainnet, localhost } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet, ...(process.env.NODE_ENV === 'development' ? [goerli] : [])],
+  [mainnet, ...(process.env.NODE_ENV === 'development' ? [goerli, localhost] : [])],
   [
     publicProvider(),
   ],

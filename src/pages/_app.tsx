@@ -6,6 +6,7 @@ import * as React from 'react'
 import { WagmiConfig } from 'wagmi'
 
 import { chains, client } from '../wagmi'
+import '../styles/main.css';
 
 function App({ Component, pageProps }: AppProps) {
   const [mounted, setMounted] = React.useState(false)
