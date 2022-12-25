@@ -55,6 +55,7 @@ export default function GameView() {
     <div>
         <ConnectButton />
     <h3> game {gameID?.slice(0, 10)} </h3>
+    {!(gameID as string) ? '' : <p><a href={`https://www.reservoir.market/collections/0xcaac504c24a18ef7e005547fb4c5358446f8b035?attributes%5Bgame+ID%5D=${ethers.BigNumber.from(gameID as string).toString()}`}>See NFTs minted by your group </a></p>}
     {nextUp && <NextUp address={nextUp as Address}/>}
     {address == nextUp && game && gameIDBytes32 && <TakeTurn gameID={gameIDBytes32} game={game} />}
     </div>
@@ -115,7 +116,6 @@ function TakeTurn({gameID, game}: {gameID : Uint8Array, game: Game}) {
         <button onClick={steal}> Steal Someone Else&apos;s NFT </button>
         <br></br>
         <input placeholder='token ID' value={stealID} onChange={(e) => setStealID(e.target.value)} ></input>
-        <p> {stealID} </p>
         <p>note: To steal, token ID must have been minted by someone in your game</p>
         </div>
         }

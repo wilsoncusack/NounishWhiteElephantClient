@@ -1,3 +1,14 @@
-/* body {
-    background-color: red; */
-/* } */
+body {
+    color: #615243;
+    background-color: #e5d8c7;
+    font-family:  "Comic Sans MS", "Comic Sans", cursive;
+ }
+
+ textarea {
+    width: 80%;
+    height: 6em;
+ }
+
+.how-it-works{
+    background-color: #e5d8c7;
+}
