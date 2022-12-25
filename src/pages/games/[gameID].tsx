@@ -14,7 +14,7 @@ export const provider  = new ethers.providers.JsonRpcProvider(
     process.env.NEXT_PUBLIC_RPC
   );
 
-export default () => {
+export default function GameView() {
   const router = useRouter()
   const { gameID } = router.query
   const [game, setGame] = useState<Game | null>(null)
@@ -108,11 +108,11 @@ function TakeTurn({gameID, game}: {gameID : Uint8Array, game: Game}) {
     <div>
         {waitingForTx ? <p> waiting ... </p> : 
         <div>
-        <p> it's your turn! </p>
+        <p> it is your turn! </p>
         <button onClick={open}> Open Gift (mint New NFT) </button>
         <br></br>
         <br></br>
-        <button onClick={steal}> Steal Someone Else's NFT </button>
+        <button onClick={steal}> Steal Someone Else&apos;s NFT </button>
         <br></br>
         <input placeholder='token ID' value={stealID} onChange={(e) => setStealID(e.target.value)} ></input>
         <p> {stealID} </p>
