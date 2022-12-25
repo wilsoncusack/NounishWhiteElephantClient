@@ -1,3 +1,4 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -37,10 +38,7 @@ export default () => {
     if (!contract || !gameIDBytes32) return null;
     const filter = contract.filters.StartGame(gameIDBytes32, null);
     const t = await contract.queryFilter(filter)
-    console.log(t[0])
     const g = t[0].args.game
-    console.log(gameIDBytes32)
-    console.log(g)
     try {
         const p = await contract.currentParticipantTurn(gameIDBytes32, g);
         setNextUp(p)
@@ -55,6 +53,7 @@ export default () => {
 
   return(
     <div>
+        <ConnectButton />
     <h3> game {gameID?.slice(0, 10)} </h3>
     {nextUp && <NextUp address={nextUp as Address}/>}
     {address == nextUp && game && gameIDBytes32 && <TakeTurn gameID={gameIDBytes32} game={game} />}
@@ -72,6 +71,9 @@ function TakeTurn({gameID, game}: {gameID : Uint8Array, game: Game}) {
     const [stealID, setStealID] = useState<string>('')
     const [tokenId, setTokenId] = useState<string | null>('')
     const [waitingForTx, setWaitingForTx] = useState(false)
+    const [openSuccess, setOpenSuccess] = useState(false)
+    const [stealSuccess, setStealSuccess] = useState(false)
+    const [stolenFrom, setStolenFrom] = useState('')
     const { data: signer, isError, isLoading } = useSigner()
 
     const open = useCallback(async () => {
@@ -84,8 +86,23 @@ function TakeTurn({gameID, game}: {gameID : Uint8Array, game: Game}) {
         const filter = rpc.filters.Open(gameID, await signer.getAddress(), null)
         rpc.once(filter, (gameID, address, tokenId) => {
             setTokenId(tokenId.toString())
+            setOpenSuccess(true)
         })
     }, [signer])
+
+    const steal = useCallback(async () => {
+        if (!signer) { return }
+
+        const contract = NounishWhiteElephant__factory.connect(process.env.NEXT_PUBLIC_ELEPHANT_CONTRACT!, signer);
+        const tx = await contract.steal(game, stealID)
+        setWaitingForTx(true)
+        const rpc = NounishWhiteElephant__factory.connect(process.env.NEXT_PUBLIC_ELEPHANT_CONTRACT!, provider)
+        const filter = rpc.filters.Steal(gameID, await signer.getAddress(), stealID)
+        rpc.once(filter, (gameID, address, tokenId, stolenFrom) => {
+            setStolenFrom(stolenFrom)
+            setStealSuccess(true)
+        })
+    }, [signer, stealID])
     
     return (
     <div>
@@ -95,15 +112,19 @@ function TakeTurn({gameID, game}: {gameID : Uint8Array, game: Game}) {
         <button onClick={open}> Open Gift (mint New NFT) </button>
         <br></br>
         <br></br>
-        <button onClick={open}> Steal Someone Else's NFT </button>
+        <button onClick={steal}> Steal Someone Else's NFT </button>
         <br></br>
-        <input placeholder='token ID' onChange={(e) => setStealID(e.target.value)} ></input>
+        <input placeholder='token ID' value={stealID} onChange={(e) => setStealID(e.target.value)} ></input>
+        <p> {stealID} </p>
+        <p>note: To steal, token ID must have been minted by someone in your game</p>
         </div>
         }
+        {openSuccess && tokenId && <p> You minted token ID {tokenId}. See it <a href={OpenSeaTokenLink(tokenId)}>here</a> </p>}
+        {stealSuccess && <p> You stole {stealID} from {stolenFrom} <a href={OpenSeaTokenLink(stealID)}>here</a> </p>}
     </div>
     )
 }
 
-const OpenSeaTokenLink = (tokenId: number) => {
+const OpenSeaTokenLink = (tokenId: string) => {
     return `${process.env.NEXT_PUBLIC_OPENSEA_URL}${process.env.NEXT_PUBLIC_NFT_CONTRACT}/${tokenId}`
 }
