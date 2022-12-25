@@ -12,7 +12,7 @@ function Page() {
     <>
 
       <ConnectButton />
-      {isConnected && <ConnectedHome />}
+      <ConnectedHome />
     </>
   )
 }
