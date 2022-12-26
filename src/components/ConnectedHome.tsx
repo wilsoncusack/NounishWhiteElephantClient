@@ -38,6 +38,7 @@ export function ConnectedHome() {
             <div className='how-it-works'>
             <h3> How it works </h3>
             <p> Enter a comma seperated list of the addresses or ENS names you want to play white elephant with. </p>
+            <p> If YOU want to play, be sure to include YOUR address, too! </p>
             <p> You will pay 0.01 ETH per participant and, by the end, everyone will get a unique NFT. </p>
             <p> On each turn, a participant can either open (mint) a new NFT, or steal from an NFT that has already been opened by someone in their group</p>
             <p> Each NFT can only be stolen a maximum of two times, and cannot be stolen back immediately after it is stolen.</p>
